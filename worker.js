@@ -26,7 +26,7 @@ function hostMatchesProxyList(host) {
 	const lists = connProxyWhitelist.length ? SOCKS5白名单.concat(connProxyWhitelist) : SOCKS5白名单;
 	return lists.some(p => { try { return new RegExp(`^${String(p).trim().replace(/\*/g, '.*')}$`, 'i').test(host); } catch (e) { return false; } });
 }
-const Pages静态页面 = 'https://nova-panel.github.io/';
+const Pages静态页面 = 'https://amam-alt.github.io/';
 const NOVA_FREE_NOTICE = 'ساخته شده توسط بنده';
 globalThis.__workerStart = Date.now();
 // --- Config JSON cache: avoids repeated KV reads on every request ---
