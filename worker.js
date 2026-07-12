@@ -50,8 +50,8 @@ const 下行Grain包字节 = 64 * 1024, 下行Grain尾部阈值 = 512, 下行Gra
 const 快速转发 = false, 最大转发 = false;
 let TCP并发拨号数 = 4, 预加载竞速拨号 = false;
 const 节点地址正则 = /^(\[[\da-fA-F:]+\]|[\d.]+|[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)*)(?::(\d+))?(?:#(.+))?$/;
-const NOVA仓库RAW = 'https://github.com/amam-alt/automatic-pancake/blob/main';
-const NOVA版本URL = NOVA仓库RAW + '/public/version.json';
+const NOVA仓库RAW = 'https://raw.githubusercontent.com/amam-alt/automatic-pancake/refs/heads/main';
+const NOVA版本URL = NOVA仓库RAW + '/version.json';
 const NOVAWorkerSrcFallback = NOVA仓库RAW + '/worker.js';
 const 每用户节点上限 = 40;
 ///////////////////////////////////////////////////////امنیت: توابع کمکی///////////////////////////////////////////////
