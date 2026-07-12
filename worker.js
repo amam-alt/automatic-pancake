@@ -1713,7 +1713,7 @@ export default {
 						try {
 							// نام پروفایل در کلاینت: اگر SUBNAME سفارشی باشد از آن استفاده می‌شود، در غیر این صورت نام پیش‌فرض فارسی
 							const _profileName = (config_JSON.优选订阅生成.SUBNAME && config_JSON.优选订阅生成.SUBNAME !== 'amir Proxy')
-								? config_JSON.优选订阅生成.SUBNAME : 'amirreza';
+								? config_JSON.优选订阅生成.SUBNAME : u.username;
 							try { responseHeaders["Profile-Title"] = 'base64:' + btoa(unescape(encodeURIComponent(_profileName))); } catch (e) {}
 							if (!ua.includes('mozilla')) responseHeaders["Content-Disposition"] = `attachment; filename*=utf-8''${encodeURIComponent(_profileName)}`;
 						} catch (e) {}
