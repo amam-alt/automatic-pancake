@@ -7079,7 +7079,7 @@ async function 读取config_JSON(env, hostname, userID, UA = "Mozilla/5.0", 重�
 				指定端口: -1,
 			},
 			SUB: null,
-			SUBNAME: "Nova" + "Proxy",
+			SUBNAME: "Amirreza" + "Proxy",
 			SUBUpdateTime: 3, // 订阅更新时间（小时）
 			TOKEN: await MD5MD5(hostname + userID),
 		},
