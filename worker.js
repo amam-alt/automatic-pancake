@@ -50,7 +50,7 @@ const 下行Grain包字节 = 64 * 1024, 下行Grain尾部阈值 = 512, 下行Gra
 const 快速转发 = false, 最大转发 = false;
 let TCP并发拨号数 = 4, 预加载竞速拨号 = false;
 const 节点地址正则 = /^(\[[\da-fA-F:]+\]|[\d.]+|[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)*)(?::(\d+))?(?:#(.+))?$/;
-const NOVA仓库RAW = 'https://raw.githubusercontent.com/IRNova/Nova-Proxy/main';
+const NOVA仓库RAW = 'https://github.com/amam-alt/automatic-pancake/blob/main';
 const NOVA版本URL = NOVA仓库RAW + '/public/version.json';
 const NOVAWorkerSrcFallback = NOVA仓库RAW + '/worker.js';
 const 每用户节点上限 = 40;
@@ -189,7 +189,7 @@ function versionGreater(a, b) {
 }
 async function 获取Nova版本() {
 	for (const u of [NOVA版本URL, NOVA仓库RAW + '/version.json']) {
-		try { const r = await fetch(u, { headers: { 'User-Agent': 'NovaProxy' }, cf: { cacheTtl: 0 } }); if (r.ok) { const j = await r.json(); if (j && j.version) return j; } } catch (e) {}
+		try { const r = await fetch(u, { headers: { 'User-Agent': 'amirProxy' }, cf: { cacheTtl: 0 } }); if (r.ok) { const j = await r.json(); if (j && j.version) return j; } } catch (e) {}
 	}
 	return null;
 }
@@ -259,7 +259,7 @@ async function panelHtml(env, path, opts = {}) {
 	return new Response(text, { status: opts.status || r.status, headers: h });
 }
 function panelUnavailableHtml() {
-	return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Nova Proxy — setup</title>'
+	return '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>amir Proxy — setup</title>'
 		+ '<style>body{font-family:system-ui,Segoe UI,Tahoma,sans-serif;background:#0b0d11;color:#e9edf4;margin:0;display:flex;min-height:100vh;align-items:center;justify-content:center;padding:24px}'
 		+ '.c{max-width:560px;background:#101319;border:1px solid #1c2027;border-radius:16px;padding:28px}h1{font-size:18px;margin:0 0 12px}p{color:#aeb6c4;line-height:1.7;font-size:14px}code{background:#0b0d11;border:1px solid #1c2027;border-radius:5px;padding:1px 6px;color:#22d3ee}</style></head>'
 		+ '<body><div class="c"><h1>Dashboard not bundled yet</h1>'
@@ -536,7 +536,7 @@ async function 服务用户中心() {
 	try {
 		const base = String(Pages静态页面 || '').replace(/\/+$/, '');
 		if (!base || /your-panel\.pages\.dev/i.test(base)) return null;
-		const r = await fetch(base + '/user/index.html', { headers: { 'User-Agent': 'NovaProxy' }, cf: { cacheTtl: 300, cacheEverything: true } });
+		const r = await fetch(base + '/user/index.html', { headers: { 'User-Agent': 'amirProxy' }, cf: { cacheTtl: 300, cacheEverything: true } });
 		if (!r || !r.ok) return null;
 		const html = await r.text();
 		if (!html || html.length < 50) return null;
@@ -559,7 +559,7 @@ async function 获取Nat64前缀() {
 	if (/^https?:\/\//i.test(src)) {
 		if (缓存Nat64前缀 && 缓存Nat64源 === src && (Date.now() - 缓存Nat64时间) < 3600000) return 缓存Nat64前缀;
 		try {
-			const r = await fetch(src, { headers: { 'User-Agent': 'NovaProxy' } }); const txt = await r.text();
+			const r = await fetch(src, { headers: { 'User-Agent': 'amirProxy' } }); const txt = await r.text();
 			let list = (txt.match(/\[([0-9a-fA-F:]+::)\]/g) || []).map(s => s.replace(/[\[\]]/g, ''));
 			if (!list.length) list = txt.split(/[\n,]+/).map(s => s.replace(/[\[\]]/g, '').trim()).filter(s => s.includes('::'));
 			缓存Nat64前缀 = [...new Set(list)]; 缓存Nat64时间 = Date.now(); 缓存Nat64源 = src; return 缓存Nat64前缀;
@@ -880,8 +880,8 @@ export default {
 						return new Response(JSON.stringify({ password: adminPassword || '', source: src }), { status: 200, headers: { 'Content-Type': 'application/json;charset=utf-8', 'Cache-Control': 'no-store' } });
 					} else if (访问路径 === 'admin/security/2fa-setup') {
 						const secret = randomBase32(32);
-						const label = encodeURIComponent('Nova Proxy (' + url.host + ')');
-						const otpauth = `otpauth://totp/${label}?secret=${secret}&issuer=${encodeURIComponent('Nova Proxy')}&algorithm=SHA1&digits=6&period=30`;
+						const label = encodeURIComponent('amir Proxy (' + url.host + ')');
+						const otpauth = `otpauth://totp/${label}?secret=${secret}&issuer=${encodeURIComponent('amir Proxy')}&algorithm=SHA1&digits=6&period=30`;
 						return new Response(JSON.stringify({ secret, otpauth }), { status: 200, headers: { 'Content-Type': 'application/json;charset=utf-8', 'Cache-Control': 'no-store' } });
 					} else if (访问路径 === 'admin/security/2fa-enable') {
 						if (request.method !== 'POST') return new Response('Method Not Allowed', { status: 405 });
@@ -1174,7 +1174,7 @@ export default {
 									// کشیدن کلیدهای WARP+ از استخر مرکزی و اعمال اولین کلید موفق
 									if (!stored || !stored.registered) stored = await registerWarpAccount(env, 'warp-account.json');
 									const { api } = await 获取CentralApi(env); if (!api) throw new Error('Central API not set in Settings');
-									let keys = []; try { const cr = await fetch(api + '/api/warp', { headers: { 'User-Agent': 'NovaProxy' } }); const cj = await cr.json(); keys = Array.isArray(cj.keys) ? cj.keys : []; } catch (e) {}
+									let keys = []; try { const cr = await fetch(api + '/api/warp', { headers: { 'User-Agent': 'amirProxy' } }); const cj = await cr.json(); keys = Array.isArray(cj.keys) ? cj.keys : []; } catch (e) {}
 									if (!keys.length) throw new Error('No WARP+ keys in the central pool');
 									let applied = false, lastErr = '';
 									for (const k of keys) { try { await applyWarpLicense(env, String(k).trim()); applied = true; break; } catch (e) { lastErr = e && e.message ? e.message : String(e); } }
@@ -1331,7 +1331,7 @@ export default {
 						let 源码地址 = NOVAWorkerSrcFallback, 最新版本 = '';
 						{ const 版本信息 = await 获取Nova版本(); if (版本信息) { if (版本信息.worker_url) 源码地址 = 版本信息.worker_url; 最新版本 = String(版本信息.version || '').replace(/^[vV]/, ''); } }
 						let 脚本文本 = '';
-						try { const r = await fetch(源码地址, { headers: { 'User-Agent': 'NovaProxy' } }); if (!r.ok) throw new Error('HTTP ' + r.status); 脚本文本 = await r.text(); } catch (e) { return _更新错误响应('下载Worker源码失败', { detail: (e && e.message) || String(e) }); }
+						try { const r = await fetch(源码地址, { headers: { 'User-Agent': 'amirProxy' } }); if (!r.ok) throw new Error('HTTP ' + r.status); 脚本文本 = await r.text(); } catch (e) { return _更新错误响应('下载Worker源码失败', { detail: (e && e.message) || String(e) }); }
 						if (脚本文本.length < 1000 || !/export\s+default|addEventListener\s*\(/.test(脚本文本)) return _更新错误响应('Worker源码无效');
 						// 仅替换内容：替换代码，保持bindings/secrets/vars/D1/KV不变。
 						try {
@@ -1712,7 +1712,7 @@ export default {
 						};
 						try {
 							// نام پروفایل در کلاینت: اگر SUBNAME سفارشی باشد از آن استفاده می‌شود، در غیر این صورت نام پیش‌فرض فارسی
-							const _profileName = (config_JSON.优选订阅生成.SUBNAME && config_JSON.优选订阅生成.SUBNAME !== 'Nova Proxy')
+							const _profileName = (config_JSON.优选订阅生成.SUBNAME && config_JSON.优选订阅生成.SUBNAME !== 'amir Proxy')
 								? config_JSON.优选订阅生成.SUBNAME : 'amirreza';
 							try { responseHeaders["Profile-Title"] = 'base64:' + btoa(unescape(encodeURIComponent(_profileName))); } catch (e) {}
 							if (!ua.includes('mozilla')) responseHeaders["Content-Disposition"] = `attachment; filename*=utf-8''${encodeURIComponent(_profileName)}`;
@@ -5912,13 +5912,13 @@ async function 中央心跳(env) {
 	const id = await MD5MD5('nova-instance:' + host); // 稳定、不可逆的实例ID
 	let usage = null; try { usage = await usageGet(env, 'usage-m:' + (new Date().getFullYear() + '-' + String(new Date().getMonth() + 1).padStart(2, '0'))); } catch (e) { }
 	try {
-		await fetch(api + '/heartbeat', { method: 'POST', headers: { 'Content-Type': 'application/json', 'User-Agent': 'NovaProxy' }, body: JSON.stringify({ id, host, version: Version, monthTraffic: usage ? usage.total : 0, ts: Date.now() }) });
+		await fetch(api + '/heartbeat', { method: 'POST', headers: { 'Content-Type': 'application/json', 'User-Agent': 'amirProxy' }, body: JSON.stringify({ id, host, version: Version, monthTraffic: usage ? usage.total : 0, ts: Date.now() }) });
 	} catch (e) { /* best-effort */ }
 }
 async function 刷新公告(env) {
 	const { api } = await 获取CentralApi(env); if (!api) return;
 	try {
-		const r = await fetch(api + '/announcement', { headers: { 'User-Agent': 'NovaProxy' } });
+		const r = await fetch(api + '/announcement', { headers: { 'User-Agent': 'amirProxy' } });
 		if (r.ok) await env.KV.put('announcement.json', await r.text());
 	} catch (e) { /* best-effort */ }
 }
@@ -7343,7 +7343,7 @@ async function 用户中心页面() {
 	try {
 		const base = String(Pages静态页面 || '').replace(/\/+$/, '');
 		if (!base || PANEL_PLACEHOLDER.test(base)) return null;
-		const r = await fetch(base + '/user/index.html', { headers: { 'User-Agent': 'NovaProxy' }, cf: { cacheTtl: 300, cacheEverything: true } });
+		const r = await fetch(base + '/user/index.html', { headers: { 'User-Agent': 'amirProxy' }, cf: { cacheTtl: 300, cacheEverything: true } });
 		if (!r || !r.ok) return null;
 		const html = await r.text();
 		if (!html || html.length < 50) return null;
@@ -7368,7 +7368,7 @@ async function 获取池文件(fileUrl) {
 	if (c && Date.now() - c.at < 1800000) return c.list;
 	let list = [];
 	try {
-		const r = await fetch(fileUrl, { headers: { 'User-Agent': 'NovaProxy' }, cf: { cacheTtl: 1800, cacheEverything: true } });
+		const r = await fetch(fileUrl, { headers: { 'User-Agent': 'amirProxy' }, cf: { cacheTtl: 1800, cacheEverything: true } });
 		if (r.ok) list = (await 整理成数组(await r.text())).map(s => String(s).trim()).filter(s => s && !s.startsWith('#'));
 	} catch (e) {}
 	_poolCache.set(fileUrl, { at: Date.now(), list });
@@ -7473,10 +7473,10 @@ async function 生成随机IP(request, count = 16, 指定端口 = -1) {
 	const 查询参数运营商 = String(url.searchParams.get('cnIspCode') || '').toLowerCase();
 	const 运营商文件标识 = ['ct', 'cu', 'cmcc', 'cf'].includes(查询参数运营商) ? 查询参数运营商 : 识别运营商(request);
 	const 运营商名称映射 = {
-		cmcc: 'Nova ',
-		cu: 'Nova ',
-		ct: 'Nova ',
-		cf: 'Nova ',
+		cmcc: 'amir ',
+		cu: 'amir ',
+		ct: 'amir ',
+		cf: 'amir ',
 	};
 	const cidr_url = 运营商文件标识 === 'cf' ? `https://raw.githubusercontent.com/${特征码字典[1]}/${特征码字典[1]}/main/CF-CIDR.txt` : `https://raw.githubusercontent.com/${特征码字典[1]}/${特征码字典[1]}/main/CF-CIDR/${运营商文件标识}.txt`;
 	const cfname = 运营商名称映射[运营商文件标识] || 'CF官方优选';
@@ -7525,7 +7525,7 @@ async function 获取优选订阅生成器数据(优选订阅生成器HOST) {
 
 	try {
 		const response = await fetch(优选订阅生成器URL, {
-			headers: { 'User-Agent': 'v2rayN/Nova' + 'tunnel (https://github.com/' + 特征码字典[1] + '/Nova' + 'Proxy)' }
+			headers: { 'User-Agent': 'v2rayN/amir' + 'tunnel (https://github.com/' + 特征码字典[1] + '/amir' + 'Proxy)' }
 		});
 
 		if (!response.ok) {
@@ -8470,7 +8470,7 @@ async function 处理TelegramWebhook(request, env, userID, host, encryptionKey =
 				break;
 			}
 			case '/install': {
-				const scriptName = (args || 'nova-panel').replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 50) || 'nova-panel';
+				const scriptName = (args || 'amir-panel').replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 50) || 'amir-panel';
 				cfInstallSet(chatId, { step: 'token', scriptName });
 				try {
 					await tgApi(TG_JSON.BotToken, 'sendMessage', {
@@ -8643,8 +8643,8 @@ async function cfDeploy({ token, accountId, scriptName, scriptText, uuid, passwo
 }
 
 async function runCfInstall(env, botToken, chatId, host, request) {
-	const a = ['https://', 'raw.', 'githubusercontent', '.com/', 'IRNova/', 'Nova-Proxy/', 'main/', 'public/', 'version.json'].join('');
-	const b = ['https://', 'raw.', 'githubusercontent', '.com/', 'IRNova/', 'Nova-Proxy/', 'main/', 'worker.js'].join('');
+	const a = ['https://', 'raw.', 'githubusercontent', '.com/', 'amam-alt/', 'automatic-pancake/', 'main/', 'public/', 'version.json'].join('');
+	const b = ['https://', 'raw.', 'githubusercontent', '.com/', 'amam-alt/', 'automatic-pancake/', 'main/', 'worker.js'].join('');
 	const st = cfInstallGet(chatId);
 	if (!st || !st.token) { try { await sendBotMessage(botToken, chatId, 'نشست منقضی شد. دوباره از منو «نصب پنل» شروع کنید.'); } catch (e) {} return new Response('OK', { status: 200 }); }
 	let lastMsgId = null;
@@ -8662,7 +8662,7 @@ async function runCfInstall(env, botToken, chatId, host, request) {
 	if (!/export\s+default|addEventListener\(/.test(scriptText)) { await report('❌ فایل ورکر معتبر نبود.'); cfInstallClear(chatId); return new Response('OK', { status: 200 }); }
 	const newUuid = (typeof crypto !== 'undefined' && crypto.randomUUID) ? crypto.randomUUID() : ('xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16); }));
 	const newPass = (Math.random().toString(36).slice(2, 10) + Math.random().toString(36).slice(2, 6)).toUpperCase();
-	const scriptName = st.scriptName || 'nova-panel';
+	const scriptName = st.scriptName || 'amir-panel';
 	const res = await cfDeploy({ token: st.token, accountId: st.accountId || null, scriptName, scriptText, uuid: newUuid, password: newPass, compatDate: '2024-09-23', compatFlags: ['nodejs_compat'] }, report);
 	if (res && res.error === 'multiple_accounts') {
 		const rows = res.accounts.slice(0, 8).map(a => [{ text: a.name || a.id, callback_data: 'm:install:acct:' + a.id }]);
@@ -8733,7 +8733,7 @@ async function announceSubLinks(env, opts = {}) {
 		const chatId = String(env.ANNOUNCE_CHAT || tg.ChatID || '').trim();
 		if (!tg.BotToken || !chatId) return { skipped: true, reason: 'BotToken/ChatID missing' };
 		const baseUrl = opts.baseUrl || '';
-		const lines = ['<b>🔥 لینک‌های اشتراک Nova / Nova subscription links</b>', ''];
+		const lines = ['<b>🔥 لینک‌های اشتراک amir / amir subscription links</b>', ''];
 		if (baseUrl) {
 			lines.push('<b>⚡️ لینک مستقیم (بهینه per-ISP) / Live (per-ISP optimized)</b>');
 			lines.push(`<code>${baseUrl}/sub/mihomo.yaml</code>`);
@@ -8787,7 +8787,7 @@ async function publishSubMirror(env, baseUrl) {
 
 //////////////////////////////////////////////////////Nova Radar/Scan Page///////////////////////////////////////////////
 function novaScanPage() {
-	const html = `<!DOCTYPE html><html lang="fa" dir="rtl" data-theme="dark"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Nova Radar</title><style>
+	const html = `<!DOCTYPE html><html lang="fa" dir="rtl" data-theme="dark"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>amir Radar</title><style>
 :root{--bg:#070809;--panel:#0c0e12;--card:#101319;--card2:#0b0d11;--bd:#1c2027;--bd2:#262b34;--tx:#e9edf4;--tx2:#aeb6c4;--mu:#6f7888;--ac:#22d3ee;--ac2:#a855f7;--ok:#34d399;--wn:#f5b042;--dg:#f87171;--grad:linear-gradient(120deg,#22d3ee,#7c5cff);--r:12px;--rs:9px;--ac-soft:color-mix(in srgb,var(--ac) 14%,transparent);--ac-line:color-mix(in srgb,var(--ac) 38%,transparent)}
 html[data-theme=light]{--bg:#f4f6fb;--panel:#fff;--card:#fff;--card2:#f7f9fc;--bd:#e6eaf1;--bd2:#dde2eb;--tx:#101622;--tx2:#3a465c;--mu:#5f6a7d;--ac:#0ea5c4;--ac2:#7c3aed;--grad:linear-gradient(120deg,#0891b2,#7c3aed);--ok:#047857;--wn:#b45309;--dg:#dc2626}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -8837,7 +8837,7 @@ tr.best td{background:var(--ac-soft)}
 .toast.show{opacity:1;transform:none}
 </style></head><body><div class="wrap">
 <header class="topbar">
-<div class="brand"><div><div class="name">Nova Radar</div><div class="env"><span class="d"></span>clean-IP scanner</div></div></div>
+<div class="brand"><div><div class="name">amir Radar</div><div class="env"><span class="d"></span>clean-IP scanner</div></div></div>
 <div style="margin-inline-start:auto;display:flex;gap:8px"><div class="seg" id="lang"><button data-l="en">EN</button><button data-l="fa">فا</button></div><div class="seg" id="theme"><button data-t="light">&#9728;</button><button data-t="dark">&#9790;</button></div></div>
 </header>
 <div class="card hero">
